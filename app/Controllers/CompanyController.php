@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\CompanyModel;
+use App\Models\InvoiceModel;
 use CodeIgniter\HTTP\ResponseInterface;
 
 class CompanyController extends BaseController
@@ -23,7 +24,11 @@ class CompanyController extends BaseController
     public function delete($id)
     {
         $companyModel = new CompanyModel();
+        $invoiceModel = new InvoiceModel();
         $company = $companyModel->find($id);
+        if($invoiceModel->find($id)) {
+            return redirect()->to('/admin/companies')->with('error', 'Company is exist on invoice!');
+        }
         if (!$company) {
             return redirect()->to('/admin/companies')->with('error', 'Company not found');
         }

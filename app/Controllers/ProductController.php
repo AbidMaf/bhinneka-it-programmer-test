@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\ProductModel;
+use App\Models\InvoiceModel;
 use CodeIgniter\HTTP\ResponseInterface;
 
 class ProductController extends BaseController
@@ -23,8 +24,13 @@ class ProductController extends BaseController
     }
 
     public function delete($id) {
+        $invoiceModel = new InvoiceModel();
         $productModel = new ProductModel();
+
         $product = $productModel->find($id);
+        if($invoiceModel->find($id)) {
+            return redirect()->to('/admin/products')->with('error', 'Product is exist on invoice!');
+        }
         if(!$product) {
             return redirect()->to('/admin/products')->with('error', 'Product not found');
         }
